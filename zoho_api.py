@@ -26,7 +26,6 @@ def get_fresh_access_token(client):
     return access_token
 
 def create_ticket(client, subject, description, contact_email):
-    """Create a new Zoho Desk ticket"""
     token = get_fresh_access_token(client)
     url = f"{API_BASE}/tickets"
     headers = {
@@ -40,6 +39,15 @@ def create_ticket(client, subject, description, contact_email):
         "departmentId": client["department_id"]
     }
     resp = requests.post(url, headers=headers, json=payload)
+
+    # Debugging: return both status code and response
+    if resp.status_code != 200:
+        return {
+            "error": "Zoho API call failed",
+            "status_code": resp.status_code,
+            "response": resp.text
+        }
+
     return resp.json()
 
 def list_tickets(client, limit=10):
